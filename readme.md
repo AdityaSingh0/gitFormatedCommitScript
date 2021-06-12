@@ -16,3 +16,4 @@ TODO: You can commit your work in a proper commit message. This script takes two
 - In terminal write ./CommitGit
 - Enter first line comment
 - Enter second line commit msg
+
