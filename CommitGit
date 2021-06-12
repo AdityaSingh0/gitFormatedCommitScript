@@ -77,7 +77,7 @@ do
     if [ "$DECISION" == "y" ]; then #Reading user defined inputs start
         git add --all #adding all new/modified files
         git commit -m"$(echo -e "$commitMessage")" #commiting changes
-        git push origin main
+        git push origin dev
     else
         if ! [ "$DECISION" == "y"  -o "$DECISION" == "n" ]; then
             echo "Please choose y for yes and n for no"
