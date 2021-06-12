@@ -15,27 +15,21 @@ echo -e " \033[0;36m
 #Contributor : Rajendra Singh Rana - ranarajendra386@gmail.com
 ##################################################################################### \033[0;37m" 
 echo $'\n';
-
 repos=( 
-  "/c/Users/Win10/Documents/projects/store" #location to git rapo
-  #you can add more repos here
+  "/c/Users/Win10/Documents/stores" 
+  
 )
-
 #Reading user defined inputs start
 echo "Enter First Line: "
 read first_line
 echo "Enter Commit Message: "
 read commit_message
 #Reading user defined inputs end
-
 finalcommitMsq=$first_line
 finalcommitMsq+=$'\n'
 finalcommitMsq+='-'
 finalcommitMsq+=$commit_message
 finalcommitMsq+=$'\n'
-
-echo $'\n';
-echo $'\n';
 
 for repo in "${repos[@]}"
 do
@@ -50,31 +44,41 @@ do
   if [ -z "$output" ] && [ -z "$addedFiles" ]; then
     echo -e "\e[0;31m Nothing to commit Did you run ADD manually If yes then commit Manually \033[0;37m"
   else
-    echo -e "\033[1;33m FILES THAT HAVE CHANGES \033[0;37m"
-    echo "$output"
-    echo "$addedFiles"
+    #echo "$output"
+    #echo "$addedFiles"
+    files=`git diff --name-only` #getting modified/new file names
+    #git status #added status
+    f=''
+    i=0;
+    for file in $files; do #loop for new/modified file to make commit message start
+        f+='-      modified:    '
+        f+=$file
+        f+=$'\n'
+        ((i++))
+        if [[ $i -eq 6 ]]; then
+           break
+        fi
+    done #loop for new/modified file to make commit message end
+    i=0;
+    for addF in $addedFiles; do
+        f+='-      added:       '
+        f+=$addF
+        f+=$'\n'
+        ((i++))
+        if [[ $i -eq 5 ]]; then
+           break
+        fi
+    done
+    commitMessage+=$finalcommitMsq
+    commitMessage+=$f
+    echo -e "\033[1;33mPlease Review Commit Message \033[0;37m"
+    echo -e "\033[0;35m$commitMessage \033[0;37m"
     echo "Do you want to commit these changes, y for yes and n for No in :  "
     read DECISION
     if [ "$DECISION" == "y" ]; then #Reading user defined inputs start
-        files=`git diff --name-only` #getting modified/new file names
-        #git add --all #adding all new/modified files
-        #git status #added status
-        f=''
-        for file in $files; do #loop for new/modified file to make commit message start
-            f+='-      modified:    '
-            f+=$file
-            f+=$'\n'
-        done #loop for new/modified file to make commit message end
-        for addF in $addedFiles; do
-            f+='-      added:    '
-            f+=$addF
-            f+=$'\n'
-        done
-        commitMessage+=$finalcommitMsq
-        commitMessage+=$f
-        echo -e "\033[0;35m$commitMessage \033[0;37m"
-        #git commit -m"$(echo -e "$commitMessage")" #commiting changes
-        #git push origin dev
+        git add --all #adding all new/modified files
+        git commit -m"$(echo -e "$commitMessage")" #commiting changes
+        git push origin dev
     else
         if ! [ "$DECISION" == "y"  -o "$DECISION" == "n" ]; then
             echo "Please choose y for yes and n for no"
